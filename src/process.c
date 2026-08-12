@@ -7,7 +7,7 @@ typedef enum {
 
 typedef struct {
     BurstType type;
-    size_t duration;
+    Duration duration;
 } Burst;
 
 struct Process {
