@@ -41,7 +41,10 @@ size_t queue_size(ProcessQueue *q) {
     return q->size;
 }
 
-
+Process *queue_peek(ProcessQueue *q) {
+    if (!q || q->size == 0) return NULL;
+    return q->items[q->front];
+}
 
 Process *queue_at(ProcessQueue *q, size_t index) {
     if (index >= q->size) {
@@ -94,4 +97,22 @@ Process *queue_remove(ProcessQueue *q) {
     q->size--;
 
     return p;
+}
+
+/* Itera sobre todos os processos da fila chamando iter(processo, args).
+ * Se iter retornar valor diferente de 0 para algum processo, interrompe
+ * a iteração e retorna esse processo. Retorna NULL se nenhum processo
+ * satisfizer a condição. */
+Process *queue_for_each(ProcessQueue *q, QueueIterator iter) {
+    if (!q || !iter) return NULL;
+
+    for (size_t i = 0; i < q->size; i++) {
+        size_t idx = (q->front + i) % q->capacity;
+        Process *p = q->items[idx];
+        if (iter(p, NULL) != 0) {
+            return p;
+        }
+    }
+
+    return NULL;
 }
