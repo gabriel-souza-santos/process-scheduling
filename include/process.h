@@ -42,4 +42,11 @@ Duration process_execute(Process *p, Duration time);
  * pode ser menor se a rajada de E/S acabar antes. */
 Duration process_wait(Process *p, Duration time);
 
+/* Adiciona uma rajada (CPU ou E/S alternados) ao processo.
+ * A primeira rajada é sempre CPU. Retorna 0 em caso de sucesso. */
+int process_add_burst(Process *p, Duration duration);
+
+/* Retorna o tempo total de CPU ainda necessário pelo processo. */
+Duration process_remaining_cpu_time(Process *p);
+
 #endif /* PROCESS_H */
