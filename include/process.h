@@ -10,6 +10,9 @@ typedef struct Process Process;
  Caso necessário, considere com nanosegundos */
 typedef size_t Duration;
 
+/* Representação de duração de tempo infinito */
+#define DURATION_INF ((Duration)(-1))
+
 typedef enum {
     PROCESS_READY,
     PROCESS_RUNNING,
