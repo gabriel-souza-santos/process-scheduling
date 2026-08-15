@@ -48,19 +48,19 @@ void process_destroy(Process **p) {
     }
 }
 
-int process_priority(Process *p) {
+int process_priority(const Process *p) {
     return p->priority;
 }
 
-int process_id(Process *p) {
+int process_id(const Process *p) {
     return p->id;
 }
 
-Duration process_arrival_time(Process *p) {
+Duration process_arrival_time(const Process *p) {
     return p->arrival_time;
 }
 
-ProcessState process_state(Process *p) {
+ProcessState process_state(const Process *p) {
     return p->state;
 }
 

@@ -30,11 +30,11 @@ typedef struct {
 Process *process_new(ProcessAttr attr);
 void process_destroy(Process **p);
 
-int process_priority(Process *p);
-int process_id(Process *p);
+int process_priority(const Process *p);
+int process_id(const Process *p);
 
-Duration process_arrival_time(Process *p);
-ProcessState process_state(Process *p);
+Duration process_arrival_time(const Process *p);
+ProcessState process_state(const Process *p);
 
 /* Tenta executar o processo na CPU pelo tempo de determinado (quantum).
  * Retorna o tempo realmente consumido, pode ser menor se a rajada de CPU
