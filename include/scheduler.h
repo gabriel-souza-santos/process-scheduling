@@ -14,7 +14,7 @@ typedef struct {
     Duration total_time;
 } SchedulerMetrics;
 
-typedef void (*EnqueuePolicy)(ProcessQueue *q, Process *p);
+typedef size_t (*EnqueuePolicy)(ProcessQueue *q, Process *p);
 typedef Process *(*DispatchPolicy)(ProcessQueue *q);
 
 typedef struct {

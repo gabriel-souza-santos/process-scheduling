@@ -5,9 +5,9 @@
 #include "scheduler.h"
 // #include "queue.h" (assumindo que seja onde a fila está definida)
 
-void rr_enqueue(ProcessQueue *q, Process *p) {
+size_t rr_enqueue(ProcessQueue *q, Process *p) {
     // Round Robin insere no final da fila (FIFO)
-    queue_insert(q, p);
+    return queue_insert(q, p);
 }
 
 Process *rr_dispatch(ProcessQueue *q) {
@@ -17,11 +17,7 @@ Process *rr_dispatch(ProcessQueue *q) {
 // O construtor agora recebe o tamanho do quantum desejado
 Scheduler round_robin_new(Duration quantum) {
     Scheduler s;
-    s.queue = queue_new((QueueAttr){
-        .cmp_func = NULL, // Não precisa ordenar, é por ordem de chegada
-        .capacity = 0,
-    });
-
+    s.queue = queue_new(NULL); // Não precisa ordenar, é por ordem de chegada
     s.quantum = quantum; // Quantum finito (força a preempção no simulador)
     s.enqueue = rr_enqueue;
     s.dispatch = rr_dispatch;
