@@ -2,7 +2,8 @@
 #include "scheduler.h"
 #include <stdlib.h>
 
-#define CONTEXT_SWITCH_COST 0 // Custo de troca de contexto (em unidades de tempo)
+#define CONTEXT_SWITCH_COST 2000 // Custo de troca de contexto (2.000 ns / 2 microssegundos)
+#define NS_PER_ITERATION    5    // Cada nó percorrido na fila custa 5 ns
 
 typedef struct {
     Process *process;     // O processo em si
@@ -35,7 +36,8 @@ SchedulerMetrics simulation_run(Process **processes, size_t num_processes, Sched
         while (current_index < num_processes &&
                process_arrival_time(processes[current_index]) <= current_time) {
 
-            scheduler.enqueue(scheduler.queue, processes[current_index]);
+            size_t steps = scheduler.enqueue(scheduler.queue, processes[current_index]);
+            current_time += (Duration)(steps * NS_PER_ITERATION);
             current_index++;
         }
 
@@ -43,7 +45,8 @@ SchedulerMetrics simulation_run(Process **processes, size_t num_processes, Sched
         for (size_t i = 0; i < num_processes; i++) {
             if (control_blocks[i].wake_time <= current_time) {
                 control_blocks[i].wake_time = DURATION_INF; // Desliga o alarme
-                scheduler.enqueue(scheduler.queue, control_blocks[i].process);
+                size_t steps = scheduler.enqueue(scheduler.queue, control_blocks[i].process);
+                current_time += (Duration)(steps * NS_PER_ITERATION);
             }
         }
 
