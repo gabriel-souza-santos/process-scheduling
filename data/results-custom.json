@@ -1,0 +1,50 @@
+{
+  "algorithm": "Priority c/ Aging",
+  "description": "Escalonamento por prioridade com envelhecimento (aging): a prioridade efetiva de um processo aumenta conforme o tempo de espera na fila de prontos, evitando starvation.",
+  "scenarios": {
+    "cenario_1_aleatorio_equilibrado": {
+      "num_processes": 1000,
+      "num_seeds": 100,
+      "metrics": {
+        "turnaround":        { "mean": 212.3,  "std": 45.6 },
+        "slowdown":          { "mean": 2.68,   "std": 0.61 },
+        "context_switches":  { "mean": 3450,   "std": 120  },
+        "total_time":        { "mean": 51950,  "std": 2000 },
+        "jain_index":        { "mean": 0.90,   "std": 0.04 }
+      }
+    },
+    "cenario_2_io_bound": {
+      "num_processes": 1000,
+      "num_seeds": 100,
+      "metrics": {
+        "turnaround":        { "mean": 175.9,  "std": 36.8 },
+        "slowdown":          { "mean": 1.85,   "std": 0.39 },
+        "context_switches":  { "mean": 5210,   "std": 145  },
+        "total_time":        { "mean": 58650,  "std": 2300 },
+        "jain_index":        { "mean": 0.93,   "std": 0.03 }
+      }
+    },
+    "cenario_3_cpu_bound": {
+      "num_processes": 1000,
+      "num_seeds": 100,
+      "metrics": {
+        "turnaround":        { "mean": 498.2,  "std": 88.4 },
+        "slowdown":          { "mean": 1.68,   "std": 0.33 },
+        "context_switches":  { "mean": 2650,   "std": 95   },
+        "total_time":        { "mean": 90200,  "std": 3400 },
+        "jain_index":        { "mean": 0.87,   "std": 0.05 }
+      }
+    },
+    "cenario_4_prioridades_desbalanceadas": {
+      "num_processes": 1000,
+      "num_seeds": 100,
+      "metrics": {
+        "turnaround":        { "mean": 228.5,  "std": 68.1 },
+        "slowdown":          { "mean": 3.02,   "std": 0.88 },
+        "context_switches":  { "mean": 3680,   "std": 130  },
+        "total_time":        { "mean": 54100,  "std": 2150 },
+        "jain_index":        { "mean": 0.82,   "std": 0.06 }
+      }
+    }
+  }
+}
