@@ -1,117 +1,154 @@
 #include <stdlib.h>
 #include "process_queue.h"
 
+typedef struct Node {
+    Process *process;
+    struct Node *next;
+} Node;
+
 struct ProcessQueue {
-    size_t capacity;
     size_t size;
-    size_t front;
-    size_t rear;
-    Process **items;
-    ProcessComparator cmp_func;
+    Node *head;
+    Node *tail;
+    ProcessComparator cmp;
 };
 
-ProcessQueue *queue_new(QueueAttr attr) {
+ProcessQueue *queue_new(ProcessComparator cmp) {
     ProcessQueue *q = malloc(sizeof(ProcessQueue));
     if (!q) return NULL;
 
-    q->items = calloc(attr.capacity, sizeof(Process *));
-    if (!q->items) {
-        free(q);
-        return NULL;
-    }
-
-    q->capacity = attr.capacity;
     q->size = 0;
-    q->front = 0;
-    q->rear = 0;
-    q->cmp_func = attr.cmp_func;
+    q->head = NULL;
+    q->tail = NULL;
+    q->cmp = cmp;
 
     return q;
 }
 
 void queue_destroy(ProcessQueue **q) {
     if (q && *q) {
-        free((*q)->items);
+        Node *current = (*q)->head;
+        while (current) {
+            Node *next = current->next;
+            free(current);
+            current = next;
+        }
         free(*q);
         *q = NULL;
     }
 }
 
 size_t queue_size(ProcessQueue *q) {
-    return q->size;
+    return q ? q->size : 0;
 }
 
 Process *queue_peek(ProcessQueue *q) {
-    if (!q || q->size == 0) return NULL;
-    return q->items[q->front];
+    if (!q || !q->head) return NULL;
+    return q->head->process;
 }
 
 Process *queue_at(ProcessQueue *q, size_t index) {
-    if (index >= q->size) {
+    if (!q || index >= q->size) {
         return NULL; /* Índice fora do intervalo */
     }
-    size_t actual_index = (q->front + index) % q->capacity;
-    return q->items[actual_index];
-}
 
-void queue_insert(ProcessQueue *restrict q, Process *restrict p) {
-    if (q->size == q->capacity) {
-         return; /* Fila cheia, não é possível inserir */
+    Node *current = q->head;
+    for (size_t i = 0; i < index; i++) {
+        current = current->next;
     }
 
-    q->items[q->rear] = p;
-    q->rear = (q->rear + 1) % q->capacity;
+    return current ? current->process : NULL;
+}
+
+size_t queue_insert(ProcessQueue *restrict q, Process *restrict p) {
+    if (!q || !p) return 0;
+
+    Node *new_node = malloc(sizeof(Node));
+    if (!new_node) return 0;
+
+    new_node->process = p;
+    new_node->next = NULL;
+
+    /* Caso 1: FCFS / Round Robin (Inserção O(1) na cauda) */
+    if (!q->cmp) {
+        if (!q->head) {
+            q->head = new_node;
+            q->tail = new_node;
+        } else {
+            q->tail->next = new_node;
+            q->tail = new_node;
+        }
+        q->size++;
+        return 1; /* 1 operação de inserção */
+    }
+
+    /* Caso 2: Fila Ordenada por Prioridade */
+    if (!q->head) {
+        q->head = new_node;
+        q->tail = new_node;
+        q->size++;
+        return 1;
+    }
+
+    /* Inserção no início (maior prioridade que o head atual) */
+    if (q->cmp(p, q->head->process) < 0) {
+        new_node->next = q->head;
+        q->head = new_node;
+        q->size++;
+        return 1; /* 1 comparação realizada */
+    }
+
+    /* Busca a posição correta mantendo a contagem de iterações */
+    Node *current = q->head;
+    size_t iterations = 1; /* Já comparou com a cabeça */
+
+    while (current->next != NULL && q->cmp(p, current->next->process) >= 0) {
+        current = current->next;
+        iterations++;
+    }
+
+    new_node->next = current->next;
+    current->next = new_node;
+
+    /* Atualiza a cauda se foi inserido ao final */
+    if (new_node->next == NULL) {
+        q->tail = new_node;
+    }
+
     q->size++;
+    return iterations;
 }
 
 Process *queue_remove(ProcessQueue *q) {
-    if (q->size == 0) {
-        return NULL; /* Fila vazia, não é possível remover */
+    if (!q || q->size == 0 || !q->head) {
+        return NULL;
     }
 
-    size_t target = q->front;
+    /* Como a lista já é mantida ordenada na inserção,
+     * a remoção é sempre O(1) removendo o head. */
+    Node *removed_node = q->head;
+    Process *p = removed_node->process;
 
-    if (q->cmp_func) {
-        /* Busca o elemento de maior prioridade na janela [front, rear) */
-        target = q->front;
-        for (size_t i = 1; i < q->size; i++) {
-            size_t idx = (q->front + i) % q->capacity;
-            if (q->cmp_func(q->items[idx], q->items[target]) < 0) {
-                target = idx;
-            }
-        }
+    q->head = q->head->next;
+    if (!q->head) {
+        q->tail = NULL;
     }
 
-    Process *p = q->items[target];
-
-    /* Fecha o buraco deslocando os elementos entre front e target */
-    size_t index = target;
-    while (index != q->front) {
-        size_t prev = (index == 0) ? q->capacity - 1 : index - 1;
-        q->items[index] = q->items[prev];
-        index = prev;
-    }
-
-    q->items[q->front] = NULL;
-    q->front = (q->front + 1) % q->capacity;
+    free(removed_node);
     q->size--;
 
     return p;
 }
 
-/* Itera sobre todos os processos da fila chamando iter(processo, args).
- * Se iter retornar valor diferente de 0 para algum processo, interrompe
- * a iteração e retorna esse processo. Retorna NULL se nenhum processo
- * satisfizer a condição. */
 Process *queue_for_each(ProcessQueue *q, QueueIterator iter) {
     if (!q || !iter) return NULL;
 
-    for (size_t i = 0; i < q->size; i++) {
-        size_t idx = (q->front + i) % q->capacity;
-        Process *p = q->items[idx];
-        if (iter(p, NULL) != 0) {
-            return p;
+    Node *current = q->head;
+    while (current) {
+        if (iter(current->process, NULL) != 0) {
+            return current->process;
         }
+        current = current->next;
     }
 
     return NULL;
