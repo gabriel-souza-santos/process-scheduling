@@ -11,6 +11,7 @@ typedef struct {
     double jain_index;
     size_t context_switches;
     size_t num_processes;
+    size_t total_comparisons;
     Duration total_time;
 } SchedulerMetrics;
 

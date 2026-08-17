@@ -11,6 +11,7 @@ void metrics_print(SchedulerMetrics m, const char *algorithm_name) {
     printf("  Processos simulados  : %zu\n",   m.num_processes);
     printf("  Tempo total          : %zu\n",   m.total_time);
     printf("  Trocas de contexto   : %zu\n",   m.context_switches);
+    printf("  Comparações da Fila  : %zu\n",   m.total_comparisons);
     printf("  Turnaround medio     : %.4f\n",  m.average_turnaround);
     printf("  Slowdown medio       : %.4f\n",  m.average_slowdown);
     printf("  Indice de Jain       : %.4f\n",  m.jain_index);

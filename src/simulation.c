@@ -17,6 +17,7 @@ SchedulerMetrics simulation_run(Process **processes, size_t num_processes, Sched
     Duration current_time = 0;
     Process *running = NULL;
     size_t context_switches = 0;
+    size_t total_comparisons = 0;
     size_t current_index = 0;
     size_t finished = 0;
 
@@ -37,6 +38,7 @@ SchedulerMetrics simulation_run(Process **processes, size_t num_processes, Sched
                process_arrival_time(processes[current_index]) <= current_time) {
 
             size_t steps = scheduler.enqueue(scheduler.queue, processes[current_index]);
+            total_comparisons += steps; 
             current_time += (Duration)(steps * NS_PER_ITERATION);
             current_index++;
         }
@@ -46,6 +48,7 @@ SchedulerMetrics simulation_run(Process **processes, size_t num_processes, Sched
             if (control_blocks[i].wake_time <= current_time) {
                 control_blocks[i].wake_time = DURATION_INF; // Desliga o alarme
                 size_t steps = scheduler.enqueue(scheduler.queue, control_blocks[i].process);
+                total_comparisons += steps;
                 current_time += (Duration)(steps * NS_PER_ITERATION);
             }
         }
@@ -160,6 +163,7 @@ SchedulerMetrics simulation_run(Process **processes, size_t num_processes, Sched
     metrics.average_turnaround = mean_turnaround;
     metrics.average_slowdown = mean_slowdown;
     metrics.context_switches = context_switches;
+    metrics.total_comparisons = total_comparisons;
     metrics.jain_index = jain_index;
     metrics.total_time = current_time;
 
