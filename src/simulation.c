@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 #define CONTEXT_SWITCH_COST 2000 // Custo de troca de contexto (2.000 ns / 2 microssegundos)
-#define NS_PER_ITERATION    5    // Cada nó percorrido na fila custa 5 ns
+#define NS_PER_ITERATION    0    // Cada nó percorrido na fila custa x ns
 
 typedef struct {
     Process *process;     // O processo em si
