@@ -10,6 +10,9 @@ typedef struct Process Process;
  Caso necessário, considere com nanosegundos */
 typedef size_t Duration;
 
+/* Representação de duração de tempo infinito */
+#define DURATION_INF ((Duration)(-1))
+
 typedef enum {
     PROCESS_READY,
     PROCESS_RUNNING,
@@ -27,11 +30,11 @@ typedef struct {
 Process *process_new(ProcessAttr attr);
 void process_destroy(Process **p);
 
-int process_priority(Process *p);
-int process_id(Process *p);
+int process_priority(const Process *p);
+int process_id(const Process *p);
 
-Duration process_arrival_time(Process *p);
-ProcessState process_state(Process *p);
+Duration process_arrival_time(const Process *p);
+ProcessState process_state(const Process *p);
 
 /* Tenta executar o processo na CPU pelo tempo de determinado (quantum).
  * Retorna o tempo realmente consumido, pode ser menor se a rajada de CPU
@@ -41,5 +44,12 @@ Duration process_execute(Process *p, Duration time);
 /* Tenta processar o tempo de E/S. Retorna o tempo realmente consumido,
  * pode ser menor se a rajada de E/S acabar antes. */
 Duration process_wait(Process *p, Duration time);
+
+/* Adiciona uma rajada (CPU ou E/S alternados) ao processo.
+ * A primeira rajada é sempre CPU. Retorna 0 em caso de sucesso. */
+int process_add_burst(Process *p, Duration duration);
+
+/* Retorna o tempo total de CPU ainda necessário pelo processo. */
+Duration process_remaining_cpu_time(Process *p);
 
 #endif /* PROCESS_H */
