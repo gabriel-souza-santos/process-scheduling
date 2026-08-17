@@ -9,10 +9,10 @@ typedef struct {
     double average_turnaround;
     double average_slowdown;
     double jain_index;
-    size_t context_switches;
-    size_t num_processes;
-    size_t total_comparisons;
-    Duration total_time;
+    double context_switches;
+    double num_processes;
+    double total_comparisons;
+    double total_time;
 } SchedulerMetrics;
 
 typedef size_t (*EnqueuePolicy)(ProcessQueue *q, Process *p);
