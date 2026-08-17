@@ -149,6 +149,7 @@ SchedulerMetrics simulation_run(Process **processes, size_t num_processes, Sched
         jain_index = 1.0;
     }
 
+    metrics.num_processes = num_processes;
     metrics.average_turnaround = mean_turnaround;
     metrics.average_slowdown = mean_slowdown;
     metrics.context_switches = context_switches;
