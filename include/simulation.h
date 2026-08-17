@@ -4,7 +4,7 @@
 #include "process.h"
 #include "scheduler.h"
 
-void simulation_run(Process **processes, size_t num_processes,
+SchedulerMetrics simulation_run(Process **processes, size_t num_processes,
                     Scheduler scheduler);
 
 #endif /* SIMULATION_H */
