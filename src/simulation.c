@@ -84,6 +84,13 @@ SchedulerMetrics simulation_run(Process **processes, size_t num_processes, Sched
                 control_blocks[pid].wake_time = current_time + io_duration;
                 running = NULL; // Libera a CPU
             }
+            else if (state == PROCESS_READY) {
+                // Caso C: Quantum expirou, processo ainda tem CPU restante
+                size_t steps = scheduler.enqueue(scheduler.queue, running);
+                total_comparisons += steps;
+                current_time += (Duration)(steps * NS_PER_ITERATION);
+                running = NULL;
+            }
         } 
         else {
             /* SALTO NO TEMPO (CPU Ociosa)
