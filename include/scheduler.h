@@ -15,15 +15,17 @@ typedef struct {
     double total_time;
 } SchedulerMetrics;
 
-typedef size_t (*EnqueuePolicy)(ProcessQueue *q, Process *p);
-typedef Process *(*DispatchPolicy)(ProcessQueue *q);
+typedef struct Scheduler Scheduler;
 
-typedef struct {
-    ProcessQueue *queue; 
+typedef size_t (*EnqueuePolicy)(Scheduler *s, ProcessControlBlock *ctx);
+typedef Process *(*DispatchPolicy)(Scheduler *s, ProcessControlBlock *ctx);
+
+struct Scheduler {
+    ProcessQueue *queue;
     Duration quantum;
     EnqueuePolicy enqueue;
     DispatchPolicy dispatch;
-} Scheduler;
+};
 
 void metrics_print(SchedulerMetrics metrics, const char *algorithm_name);
 void metrics_export(const char *filepath, SchedulerMetrics metrics,

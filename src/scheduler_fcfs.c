@@ -1,22 +1,24 @@
 #include "scheduler_fcfs.h"
+#include "process.h"
 #include "process_queue.h"
+#include "scheduler.h"
 #include <stddef.h>
 
-size_t fcfs_enqueue(ProcessQueue *q, Process *p) {
+size_t enqueue(Scheduler *s, ProcessControlBlock *ctx) {
     // FCFS não utiliza o quantum, apenas adiciona no final da fila
-    return queue_insert(q, p);
+    return queue_insert(s->queue, ctx->process);
 }
 
-Process *fcfs_dispatch(ProcessQueue *q) {
-    return queue_remove(q);
+Process *dispatch(Scheduler *s, ProcessControlBlock *ctx) {
+    return queue_remove(s->queue);
 }
 
 Scheduler fcfs_new(void) {
     Scheduler s;
-    s.queue = queue_new(NULL); // FCFS não precisa de função de comparação
-    s.quantum = DURATION_INF; // Roda até o final da rajada de CPU
-    s.enqueue = fcfs_enqueue;
-    s.dispatch = fcfs_dispatch;
+    s.queue    = queue_new(NULL); // FCFS não precisa de função de comparação
+    s.quantum  = DURATION_INF; // Roda até o final da rajada de CPU
+    s.enqueue  = enqueue;
+    s.dispatch = dispatch;
     return s;
 }
 

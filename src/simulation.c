@@ -5,13 +5,6 @@
 #define CONTEXT_SWITCH_COST 2000 // Custo de troca de contexto (2.000 ns / 2 microssegundos)
 #define NS_PER_ITERATION    0    // Cada nó percorrido na fila custa x ns
 
-typedef struct {
-    Process *process;     // O processo em si
-    Duration wake_time;   // Quando deve acordar de E/S (DURATION_INF se não estiver em E/S)
-    Duration finish_time; // Instante em que concluiu toda a execução
-    Duration cpu_time;    // Tempo total de CPU consumido 
-} ProcessControlBlock;
-
 SchedulerMetrics simulation_run(Process **processes, size_t num_processes, Scheduler scheduler) {
     SchedulerMetrics metrics = {0};
     Duration current_time = 0;
@@ -37,7 +30,7 @@ SchedulerMetrics simulation_run(Process **processes, size_t num_processes, Sched
         while (current_index < num_processes &&
                process_arrival_time(processes[current_index]) <= current_time) {
 
-            size_t steps = scheduler.enqueue(scheduler.queue, processes[current_index]);
+            size_t steps = scheduler.enqueue(&scheduler, &control_blocks[current_index]);
             total_comparisons += steps; 
             current_time += (Duration)(steps * NS_PER_ITERATION);
             current_index++;
@@ -47,7 +40,7 @@ SchedulerMetrics simulation_run(Process **processes, size_t num_processes, Sched
         for (size_t i = 0; i < num_processes; i++) {
             if (control_blocks[i].wake_time <= current_time) {
                 control_blocks[i].wake_time = DURATION_INF; // Desliga o alarme
-                size_t steps = scheduler.enqueue(scheduler.queue, control_blocks[i].process);
+                size_t steps = scheduler.enqueue(&scheduler, &control_blocks[i]);
                 total_comparisons += steps;
                 current_time += (Duration)(steps * NS_PER_ITERATION);
             }
@@ -55,7 +48,7 @@ SchedulerMetrics simulation_run(Process **processes, size_t num_processes, Sched
 
         /* DESPACHO DA CPU (Se estiver livre, pede ao escalonador) */
         if (!running) {
-            running = scheduler.dispatch(scheduler.queue);
+            running = scheduler.dispatch(&scheduler, control_blocks);
             if (running) {
                 context_switches++; // Contabiliza a troca de contexto
                 current_time += CONTEXT_SWITCH_COST; // Adiciona o custo de troca de contexto
@@ -89,7 +82,7 @@ SchedulerMetrics simulation_run(Process **processes, size_t num_processes, Sched
             }
             else if (state == PROCESS_READY) {
                 // Caso C: Quantum expirou, processo ainda tem CPU restante
-                size_t steps = scheduler.enqueue(scheduler.queue, running);
+                size_t steps = scheduler.enqueue(&scheduler, &control_blocks[pid]);
                 total_comparisons += steps;
                 current_time += (Duration)(steps * NS_PER_ITERATION);
                 running = NULL;

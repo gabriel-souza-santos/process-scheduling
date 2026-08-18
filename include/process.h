@@ -22,10 +22,17 @@ typedef enum {
 
 /* Atrributos para criação de processos */
 typedef struct {
-    int priority; /* quanto maior o valor, mais prioridade o processo tem*/
-    int id; /* deve ser único para cada processo */
-    Duration arrival_time; /* tempo de chegada do processo */
+    int id;                 /* incremental e único para cada processo */
+    int priority;           /* quanto maior o valor, mais prioridade o processo tem*/
+    Duration arrival_time;  /* tempo de chegada do processo */
 } ProcessAttr;
+
+typedef struct {
+    Process *process;       /* O processo em si */
+    Duration wake_time;     /* Quando deve acordar de E/S (DURATION_INF se não estiver em E/S) */
+    Duration finish_time;   /* Instante em que concluiu toda a execução */
+    Duration cpu_time;      /* Tempo total de CPU consumido */
+} ProcessControlBlock;
 
 Process *process_new(ProcessAttr attr);
 void process_destroy(Process **p);
