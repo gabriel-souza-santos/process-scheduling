@@ -1,0 +1,50 @@
+{
+  "algorithm": "Round Robin",
+  "quantum": 4,
+  "scenarios": {
+    "cenario_1_aleatorio_equilibrado": {
+      "num_processes": 1000,
+      "num_seeds": 100,
+      "metrics": {
+        "turnaround":        { "mean": 231.5,  "std": 48.7 },
+        "slowdown":          { "mean": 3.10,   "std": 0.85 },
+        "context_switches":  { "mean": 6842,   "std": 210  },
+        "total_time":        { "mean": 52890,  "std": 2050 },
+        "jain_index":        { "mean": 0.93,   "std": 0.03 }
+      }
+    },
+    "cenario_2_io_bound": {
+      "num_processes": 1000,
+      "num_seeds": 100,
+      "metrics": {
+        "turnaround":        { "mean": 178.2,  "std": 39.5 },
+        "slowdown":          { "mean": 1.98,   "std": 0.42 },
+        "context_switches":  { "mean": 8935,   "std": 260  },
+        "total_time":        { "mean": 59210,  "std": 2380 },
+        "jain_index":        { "mean": 0.95,   "std": 0.02 }
+      }
+    },
+    "cenario_3_cpu_bound": {
+      "num_processes": 1000,
+      "num_seeds": 100,
+      "metrics": {
+        "turnaround":        { "mean": 545.8,   "std": 98.6  },
+        "slowdown":          { "mean": 1.82,    "std": 0.38  },
+        "context_switches":  { "mean": 15230,   "std": 410   },
+        "total_time":        { "mean": 101500,  "std": 4200  },
+        "jain_index":        { "mean": 0.91,    "std": 0.03  }
+      }
+    },
+    "cenario_4_prioridades_desbalanceadas": {
+      "num_processes": 1000,
+      "num_seeds": 100,
+      "metrics": {
+        "turnaround":        { "mean": 249.9,  "std": 52.3 },
+        "slowdown":          { "mean": 3.28,   "std": 0.79 },
+        "context_switches":  { "mean": 7120,   "std": 198  },
+        "total_time":        { "mean": 55990,  "std": 2150 },
+        "jain_index":        { "mean": 0.94,   "std": 0.03 }
+      }
+    }
+  }
+}
