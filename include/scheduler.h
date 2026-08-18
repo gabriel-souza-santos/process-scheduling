@@ -17,8 +17,8 @@ typedef struct {
 
 typedef struct Scheduler Scheduler;
 
-typedef size_t (*EnqueuePolicy)(Scheduler *s, ProcessControlBlock *ctx);
-typedef Process *(*DispatchPolicy)(Scheduler *s, ProcessControlBlock *ctx);
+typedef size_t (*EnqueuePolicy)(Scheduler *s, ProcessControlBlock *pcb, Duration current_time);
+typedef Process *(*DispatchPolicy)(Scheduler *s, ProcessControlBlock pcb_table[], size_t size, Duration current_time);
 
 struct Scheduler {
     ProcessQueue *queue;

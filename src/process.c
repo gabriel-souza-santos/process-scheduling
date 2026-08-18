@@ -20,7 +20,6 @@ struct Process {
     Burst *bursts;
     size_t burst_count;
     size_t current_burst; /* índice da rajada atual */
-
     Duration burst_remaining; /* tempo restante na rajada atual */
 };
 
@@ -50,6 +49,10 @@ void process_destroy(Process **p) {
 
 int process_priority(const Process *p) {
     return p->priority;
+}
+
+void process_set_priority(Process *p, int new_priority) {
+    p->priority = new_priority;
 }
 
 int process_id(const Process *p) {

@@ -5,6 +5,7 @@
 #include "scheduler_fcfs.h"
 #include "scheduler_round_robin.h"
 #include "scheduler_priority.h"
+#include "scheduler_custom.h"
 #include "seed_generator.h"
 
 #define NUM_PROCESSES 1000
@@ -104,8 +105,9 @@ void run_scenario(ScenarioType type, const char* scenario_name) {
     printf("\nExecutando Cenário: %s...\n", scenario_name);
 
     SchedulerMetrics avg_fcfs = {0};
-    SchedulerMetrics avg_rr   = {0};
-    SchedulerMetrics avg_prio = {0};
+    SchedulerMetrics avg_round_robin = {0};
+    SchedulerMetrics avg_priority = {0};
+    SchedulerMetrics avg_custom = {0};
 
     for (int s = 0; s < NUM_SEEDS; s++) {
         unsigned int current_seed = base_seed + s;
@@ -113,32 +115,41 @@ void run_scenario(ScenarioType type, const char* scenario_name) {
 
         // FCFS
         Process **workload_fcfs = generate_workload(current_seed, type);
-        Scheduler fcfs = fcfs_new();
+        Scheduler *fcfs = fcfs_new();
         SchedulerMetrics metrics_fcfs = simulation_run(workload_fcfs, NUM_PROCESSES, fcfs);
         update_incremental_avg(&avg_fcfs, metrics_fcfs, k);
-        fcfs_destroy(&fcfs);
+        fcfs_destroy(fcfs);
         destroy_workload(workload_fcfs);
         
         // Round Robin
         Process **workload_rr = generate_workload(current_seed, type);
-        Scheduler round_robin = round_robin_new(2000); 
+        Scheduler *round_robin = round_robin_new(2000); 
         SchedulerMetrics metrics_rr = simulation_run(workload_rr, NUM_PROCESSES, round_robin);
-        update_incremental_avg(&avg_rr, metrics_rr, k);
-        round_robin_destroy(&round_robin);
+        update_incremental_avg(&avg_round_robin, metrics_rr, k);
+        round_robin_destroy(round_robin);
         destroy_workload(workload_rr);
         
         // Priority
         Process **workload_priority = generate_workload(current_seed, type);
-        Scheduler priority = priority_new();
+        Scheduler *priority = priority_new();
         SchedulerMetrics metrics_prio = simulation_run(workload_priority, NUM_PROCESSES, priority);
-        update_incremental_avg(&avg_prio, metrics_prio, k);
-        priority_destroy(&priority);
+        update_incremental_avg(&avg_priority, metrics_prio, k);
+        priority_destroy(priority);
         destroy_workload(workload_priority);
+
+        // Personalizado
+        Process **workload_custom = generate_workload(current_seed, type);
+        Scheduler *custom = custom_scheduler_new(workload_custom, NUM_PROCESSES);
+        SchedulerMetrics metrics_custom = simulation_run(workload_custom, NUM_PROCESSES, custom);
+        update_incremental_avg(&avg_custom, metrics_custom, k);
+        custom_scheduler_destroy(custom);
+        destroy_workload(workload_custom);
     }
 
     metrics_print(avg_fcfs, "FCFS");
-    metrics_print(avg_rr, "Round Robin");
-    metrics_print(avg_prio, "Prioridade");
+    metrics_print(avg_round_robin, "Round Robin");
+    metrics_print(avg_priority, "Prioridade");
+    metrics_print(avg_custom, "Personalizado");
 }
 
 int main(void) {

@@ -1,11 +1,12 @@
 #include "process.h"
 #include "scheduler.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 #define CONTEXT_SWITCH_COST 2000 // Custo de troca de contexto (2.000 ns / 2 microssegundos)
 #define NS_PER_ITERATION    0    // Cada nó percorrido na fila custa x ns
 
-SchedulerMetrics simulation_run(Process **processes, size_t num_processes, Scheduler scheduler) {
+SchedulerMetrics simulation_run(Process *processes[], size_t num_processes, Scheduler *scheduler) {
     SchedulerMetrics metrics = {0};
     Duration current_time = 0;
     Process *running = NULL;
@@ -22,6 +23,9 @@ SchedulerMetrics simulation_run(Process **processes, size_t num_processes, Sched
         control_blocks[i].wake_time = DURATION_INF;
         control_blocks[i].finish_time = 0;
         control_blocks[i].cpu_time = 0;
+        control_blocks[i].burst_time = 0;
+        control_blocks[i].burst_count = 1;
+        control_blocks[i].base_priority = process_priority(processes[i]);
     }
 
     while (finished < num_processes) {
@@ -30,7 +34,7 @@ SchedulerMetrics simulation_run(Process **processes, size_t num_processes, Sched
         while (current_index < num_processes &&
                process_arrival_time(processes[current_index]) <= current_time) {
 
-            size_t steps = scheduler.enqueue(&scheduler, &control_blocks[current_index]);
+            size_t steps = scheduler->enqueue(scheduler, &control_blocks[current_index], current_time);
             total_comparisons += steps; 
             current_time += (Duration)(steps * NS_PER_ITERATION);
             current_index++;
@@ -40,7 +44,7 @@ SchedulerMetrics simulation_run(Process **processes, size_t num_processes, Sched
         for (size_t i = 0; i < num_processes; i++) {
             if (control_blocks[i].wake_time <= current_time) {
                 control_blocks[i].wake_time = DURATION_INF; // Desliga o alarme
-                size_t steps = scheduler.enqueue(&scheduler, &control_blocks[i]);
+                size_t steps = scheduler->enqueue(scheduler, &control_blocks[i], current_time);
                 total_comparisons += steps;
                 current_time += (Duration)(steps * NS_PER_ITERATION);
             }
@@ -48,7 +52,7 @@ SchedulerMetrics simulation_run(Process **processes, size_t num_processes, Sched
 
         /* DESPACHO DA CPU (Se estiver livre, pede ao escalonador) */
         if (!running) {
-            running = scheduler.dispatch(&scheduler, control_blocks);
+            running = scheduler->dispatch(scheduler, control_blocks, num_processes, current_time);
             if (running) {
                 context_switches++; // Contabiliza a troca de contexto
                 current_time += CONTEXT_SWITCH_COST; // Adiciona o custo de troca de contexto
@@ -60,9 +64,11 @@ SchedulerMetrics simulation_run(Process **processes, size_t num_processes, Sched
             size_t pid = (size_t)process_id(running);
 
             // Executa o processo na CPU 
-            Duration time_consumed = process_execute(running, scheduler.quantum);
+            Duration time_consumed = process_execute(running, scheduler->quantum);
             current_time += time_consumed;
+
             control_blocks[pid].cpu_time += time_consumed;
+            control_blocks[pid].burst_time += time_consumed;
 
             ProcessState state = process_state(running);
 
@@ -78,11 +84,13 @@ SchedulerMetrics simulation_run(Process **processes, size_t num_processes, Sched
                 
                 // Configura a hora em que o processo deve acordar no PCB
                 control_blocks[pid].wake_time = current_time + io_duration;
+                control_blocks[pid].burst_time = 0;
+                control_blocks[pid].burst_count++;
                 running = NULL; // Libera a CPU
             }
             else if (state == PROCESS_READY) {
                 // Caso C: Quantum expirou, processo ainda tem CPU restante
-                size_t steps = scheduler.enqueue(&scheduler, &control_blocks[pid]);
+                size_t steps = scheduler->enqueue(scheduler, &control_blocks[pid], current_time);
                 total_comparisons += steps;
                 current_time += (Duration)(steps * NS_PER_ITERATION);
                 running = NULL;
@@ -161,6 +169,5 @@ SchedulerMetrics simulation_run(Process **processes, size_t num_processes, Sched
     metrics.total_time = current_time;
 
     free(control_blocks);
-
     return metrics;
 }
