@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include "scheduler_custom.h"
 
-#define MIN_QUANTUM      1000
-#define MAX_BURST_BONUS  5      // teto pro bônus de rajada — nunca domina a prioridade base
-#define AGING_STEP       5000   // a cada 5000ns de espera sem rodar, +1 de prioridade
+#define MIN_QUANTUM      2000
+#define MAX_BURST_BONUS  5       // teto pro bônus de rajada — nunca domina a prioridade base
+#define AGING_STEP       500000  // a cada 500000ns de espera sem rodar, +1 de prioridade
 
 typedef struct {
     Duration last_seen; // último instante em que o processo saiu do estado "pronto" (foi despachado) ou chegou
