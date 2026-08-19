@@ -44,4 +44,9 @@ Desktop.ini
 *.exe
 *.out
 *.app
+
+# Python
+__pycache__
+.venv
+.env
 ```

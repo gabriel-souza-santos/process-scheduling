@@ -5,44 +5,44 @@
       "num_processes": 1000,
       "num_seeds": 100,
       "metrics": {
-        "turnaround":        { "mean": 248.7,  "std": 62.3 },
-        "slowdown":          { "mean": 3.92,   "std": 1.15 },
-        "context_switches":  { "mean": 1987,   "std": 45   },
-        "total_time":        { "mean": 51230,  "std": 2100 },
-        "jain_index":        { "mean": 0.81,   "std": 0.06 }
+        "turnaround":        { "mean": 52607744.1650, "std": 1313333.5773 },
+        "slowdown":          { "mean": 1331.2607, "std": 29.5217 },
+        "context_switches":  { "mean": 6998.04, "std": 64.93 },
+        "total_time":        { "mean": 74680631.43, "std": 953290.98 },
+        "jain_index":        { "mean": 0.9273, "std": 0.0092 }
       }
     },
     "cenario_2_io_bound": {
       "num_processes": 1000,
       "num_seeds": 100,
       "metrics": {
-        "turnaround":        { "mean": 205.4,  "std": 54.1 },
-        "slowdown":          { "mean": 2.35,   "std": 0.68 },
-        "context_switches":  { "mean": 4123,   "std": 98   },
-        "total_time":        { "mean": 58760,  "std": 2450 },
-        "jain_index":        { "mean": 0.87,   "std": 0.04 }
+        "turnaround":        { "mean": 53556235.9225, "std": 903739.3597 },
+        "slowdown":          { "mean": 1670.4108, "std": 27.7915 },
+        "context_switches":  { "mean": 10999.82, "std": 60.75 },
+        "total_time":        { "mean": 68897712.81, "std": 562902.61 },
+        "jain_index":        { "mean": 0.9593, "std": 0.0068 }
       }
     },
     "cenario_3_cpu_bound": {
       "num_processes": 1000,
       "num_seeds": 100,
       "metrics": {
-        "turnaround":        { "mean": 612.9,  "std": 145.2 },
-        "slowdown":          { "mean": 2.05,   "std": 0.55  },
-        "context_switches":  { "mean": 1284,   "std": 32    },
-        "total_time":        { "mean": 93400,  "std": 3600  },
-        "jain_index":        { "mean": 0.74,   "std": 0.08  }
+        "turnaround":        { "mean": 35846964.3683, "std": 14445851.0779 },
+        "slowdown":          { "mean": 894.7714, "std": 54.8433 },
+        "context_switches":  { "mean": 1500.00, "std": 502.52 },
+        "total_time":        { "mean": 58376867.90, "std": 14743842.88 },
+        "jain_index":        { "mean": 0.8427, "std": 0.0744 }
       }
     },
     "cenario_4_prioridades_desbalanceadas": {
       "num_processes": 1000,
       "num_seeds": 100,
       "metrics": {
-        "turnaround":        { "mean": 261.3,  "std": 70.4 },
-        "slowdown":          { "mean": 3.55,   "std": 1.02 },
-        "context_switches":  { "mean": 2034,   "std": 51   },
-        "total_time":        { "mean": 54870,  "std": 2200 },
-        "jain_index":        { "mean": 0.83,   "std": 0.05 }
+        "turnaround":        { "mean": 52459295.0959, "std": 1398379.1407 },
+        "slowdown":          { "mean": 1327.5257, "std": 31.0211 },
+        "context_switches":  { "mean": 6996.37, "std": 63.54 },
+        "total_time":        { "mean": 74554301.90, "std": 1007935.21 },
+        "jain_index":        { "mean": 0.9266, "std": 0.0098 }
       }
     }
   }

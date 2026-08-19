@@ -3,7 +3,7 @@
 
 #include "scheduler.h"
 
-Scheduler fcfs_new(void);
+Scheduler *fcfs_new(void);
 void fcfs_destroy(Scheduler *s);
 
 #endif /* SCHEDULER_FCFS_H */

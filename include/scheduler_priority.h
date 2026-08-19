@@ -3,7 +3,7 @@
 
 #include "scheduler.h"
 
-Scheduler priority_new(void);
+Scheduler *priority_new(void);
 void priority_destroy(Scheduler *s);
 
 #endif /* SCHEDULER_PRIORITY_H */
