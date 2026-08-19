@@ -28,7 +28,5 @@ struct Scheduler {
 };
 
 void metrics_print(SchedulerMetrics metrics, const char *algorithm_name);
-void metrics_export(const char *filepath, SchedulerMetrics metrics,
-                    const char *algorithm_name, const char *scenario);
 
 #endif /* SCHEDULER_H */

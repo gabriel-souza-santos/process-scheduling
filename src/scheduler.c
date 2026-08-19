@@ -17,8 +17,3 @@ void metrics_print(SchedulerMetrics m, const char *algorithm_name) {
     printf("  Slowdown medio       : %.4f\n",  m.average_slowdown);
     printf("  Indice de Jain       : %.4f\n",  m.jain_index);
 }
-
-void metrics_export(const char *filepath, SchedulerMetrics m,
-                    const char *algorithm_name, const char *scenario) {
-    // TODO
-}
