@@ -9,9 +9,9 @@ import glob
 import json
 import math
 import os
+
 import matplotlib.pyplot as plt
 import numpy as np
-
 
 DATA_DIR = "data"
 OUTPUT_DIR = "data"
@@ -39,9 +39,10 @@ METRICS = {
 
 # Uma cor fixa por algoritmo deixa os graficos consistentes entre si.
 ALGORITHM_COLORS = {
-    "FCFS": "#4C72B0",
-    "Round Robin": "#DD8452",
-    "Priority": "#55A868",
+    "FCFS": "#121AAC",
+    "Round Robin": "#BF0ADF",
+    "Priority": "#009E64",
+    "Personalizado": "#CDCD01",
 }
 
 
